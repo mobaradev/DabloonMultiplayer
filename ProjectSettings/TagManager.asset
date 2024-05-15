@@ -9,6 +9,8 @@ TagManager:
   - VRPlayer
   - XROrigin
   - ScoreText
+  - coin
+  - TimeLimitText
   layers:
   - Default
   - TransparentFX

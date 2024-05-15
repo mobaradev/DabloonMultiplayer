@@ -22,7 +22,7 @@ public class GoalPlatfromTrigger : MonoBehaviour
         if (other.CompareTag("coin"))
         {
             OnlineGameManager onlineGameManager = FindObjectOfType<OnlineGameManager>();
-            
+            onlineGameManager.SendCoinDelivered(other.GetComponent<OnlineObject>().id);
             
         }
     }

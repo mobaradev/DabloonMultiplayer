@@ -24,6 +24,8 @@ public class OnlinePlayer : MonoBehaviour
 
     public GameObject _VRPlayer;
     private GameObject _holdingItem;
+
+    public GameObject ThirdPersonView;
     
     // Start is called before the first frame update
     void Start()
@@ -34,8 +36,15 @@ public class OnlinePlayer : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        this.transform.position = new Vector3(this.x, this.y, this.z);
-        this.transform.eulerAngles = new Vector3(this.rotX, this.rotY, this.rotZ);
+        if (this.transform.position != new Vector3(this.x, this.y, this.z))
+        {
+            this.transform.position = new Vector3(this.x, this.y, this.z);
+        }
+
+        if (this.transform.eulerAngles != new Vector3(this.rotX, this.rotY, this.rotZ))
+        {
+            this.transform.eulerAngles = new Vector3(this.rotX, this.rotY, this.rotZ);
+        }
 
         if (this.IsControlled && !this._VRPlayer)
         {
@@ -45,6 +54,8 @@ public class OnlinePlayer : MonoBehaviour
         
         if (this.IsControlled)
         {
+            this.ThirdPersonView.SetActive(false);
+            // this.GetComponent<MeshRenderer>().enabled = false;
             if (this._VRPlayer)
             {
                 this.transform.position = _VRPlayer.transform.position;

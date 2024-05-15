@@ -5,6 +5,7 @@ using UnityEngine;
 
 using NativeWebSocket;
 using TMPro;
+using UnityEngine.SceneManagement;
 
 public class OnlineGameManager : MonoBehaviour
 {
@@ -25,6 +26,9 @@ public class OnlineGameManager : MonoBehaviour
     public OnlinePlayer ControllablePlayer;
 
     private bool _isStartingDataLoaded = false;
+
+    public TextMeshPro ScoreText;
+    public TextMeshPro TimeLeftText;
     
     [System.Serializable]
     public struct Player
@@ -56,6 +60,7 @@ public class OnlineGameManager : MonoBehaviour
         public float rotX;
         public float rotY;
         public float rotZ;
+        public bool isActive;
     }
 
     [System.Serializable]
@@ -63,6 +68,7 @@ public class OnlineGameManager : MonoBehaviour
     {
         public List<Player> players;
         public List<Object> objects;
+        public int timeLeft;
     }
     
     public struct OutgoingPlayerData
@@ -144,6 +150,7 @@ public class OnlineGameManager : MonoBehaviour
             this.Objects[i].rotX = incomingData.objects[i].rotX;
             this.Objects[i].rotY = incomingData.objects[i].rotY;
             this.Objects[i].rotZ = incomingData.objects[i].rotZ;
+            this.Objects[i].isActive = incomingData.objects[i].isActive;
 
         }
         
@@ -159,6 +166,19 @@ public class OnlineGameManager : MonoBehaviour
                 this.Players[i].rotZ = incomingData.players[i].rotZ;
                 this.Players[i].holdingItemId = incomingData.players[i].holdingItemId;
             }
+        }
+
+        int scorePlayer1 = incomingData.players[0].points;
+        int scorePlayer2 = incomingData.players[1].points;
+        
+        this.ScoreText.SetText(scorePlayer1.ToString() + " - " + scorePlayer2.ToString());
+        this.TimeLeftText.SetText(incomingData.timeLeft.ToString() + "s");
+
+        if (incomingData.timeLeft < 0)
+        {
+            PlayerPrefs.SetInt("Player1Score", incomingData.players[0].points);
+            PlayerPrefs.SetInt("Player2Score", incomingData.players[1].points);
+            SceneManager.LoadScene("GameResults");
         }
     }
 
@@ -193,6 +213,8 @@ public class OnlineGameManager : MonoBehaviour
             Debug.Log("loading player int from prefs... -> " + this.ControllablePlayerId);
         }
         this._isStartingDataLoaded = false;
+        this.ScoreText = GameObject.FindWithTag("ScoreText").GetComponent<TextMeshPro>();
+        this.TimeLeftText = GameObject.FindWithTag("TimeLimitText").GetComponent<TextMeshPro>();
         
         websocket = new WebSocket(this.url);
 
@@ -204,12 +226,15 @@ public class OnlineGameManager : MonoBehaviour
         websocket.OnError += (e) =>
         {
             Debug.Log("Error! " + e);
+            SceneManager.LoadScene("NoConnection");
         };
 
         websocket.OnClose += (e) =>
         {
             Debug.Log("Connection closed!");
             // this.text.text = "Connection closed!";
+            
+            
         };
 
         websocket.OnMessage += (bytes) =>
@@ -265,6 +290,7 @@ public class OnlineGameManager : MonoBehaviour
 #if !UNITY_WEBGL || UNITY_EDITOR
         websocket.DispatchMessageQueue();
 #endif
+        
     }
 
     async void SendWebSocketMessage()
@@ -293,6 +319,11 @@ public class OnlineGameManager : MonoBehaviour
                 await websocket.SendText("{\"type\": \"get\"}");
             }
         }
+    }
+
+    public async void SendCoinDelivered(int coinId)
+    {
+        await websocket.SendText("{\"type\": \"setCoinDelivered\", \"coinId\": " + coinId.ToString() + ", \"playerId\": " + this.ControllablePlayerId.ToString() + "}");
     }
 
     private async void OnApplicationQuit()

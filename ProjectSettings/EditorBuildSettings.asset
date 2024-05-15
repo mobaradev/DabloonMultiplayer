@@ -20,6 +20,9 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/NoConnection.unity
     guid: 274b6e5b523e63b4f9535be3cc890f47
+  - enabled: 1
+    path: Assets/Scenes/GameResults.unity
+    guid: 804e3f9c8f7fb2f45b86f1ed873e77b0
   m_configObjects:
     Unity.XR.Oculus.Settings: {fileID: 11400000, guid: bfa1182bd221b4ca89619141f66f1260, type: 2}
     Unity.XR.WindowsMR.Settings: {fileID: 11400000, guid: dc5a169419fa04987b057f65238cf3ba, type: 2}

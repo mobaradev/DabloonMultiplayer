@@ -4499,7 +4499,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3161235034289548384, guid: 75c11c39433687344997111bcd040311, type: 3}
       propertyPath: url
-      value: ws://127.0.0.1:3000
+      value: ws://localhost:3000
       objectReference: {fileID: 0}
     - target: {fileID: 3161235034289548384, guid: 75c11c39433687344997111bcd040311, type: 3}
       propertyPath: ObjectPrefab
